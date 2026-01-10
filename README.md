@@ -1,5 +1,7 @@
 # Skill Snapshot
 
+[中文文档](README_CN.md)
+
 A Claude Code skill for creating snapshots of your skills with version control. Store backups in a private GitHub repository and restore any version when needed.
 
 ## Features
