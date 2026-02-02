@@ -820,7 +820,13 @@ A: 可以通过以下方式集成：
 
 ---
 
-## 📄 许可证
+## � 来源说明
+
+本项目基于开源项目 [skill-snapshot-skill](https://github.com/wshuyi/skill-snapshot-skill) 二次开发。感谢原作者 [wshuyi](https://github.com/wshuyi) 的贡献。
+
+---
+
+## �📄 许可证
 
 MIT License - 详见 [LICENSE](LICENSE) 文件
 
