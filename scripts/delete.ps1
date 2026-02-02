@@ -1,5 +1,5 @@
-﻿# ============================================================
-# diff.ps1 - Skill Snapshot 对比脚本 (Windows 11 Optimized)
+# ============================================================
+# delete.ps1 - Skill Snapshot 删除脚本 (Windows 11 Optimized)
 # ============================================================
 
 #Requires -Version 5.1
@@ -7,7 +7,7 @@ param(
     [Parameter(Position = 0, Mandatory = $true)]
     [string]$SkillName,
     
-    [Parameter(Position = 1)]
+    [Parameter(Position = 1, Mandatory = $true)]
     [string]$Version
 )
 
@@ -25,12 +25,7 @@ if (-not (Get-Command "python" -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-$ArgsList = @("diff", $SkillName)
-if (-not [string]::IsNullOrEmpty($Version)) {
-    $ArgsList += $Version
-}
-
-# Python script uses ANSI codes, which work in newer PowerShell / Windows Terminal
+$ArgsList = @("delete", $SkillName, $Version)
 python "$PythonScript" @ArgsList
 
 if ($LASTEXITCODE -ne 0) {

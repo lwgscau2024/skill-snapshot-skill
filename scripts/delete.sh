@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# scan.sh - Skill Snapshot 扫描脚本 (macOS/Linux)
+# delete.sh - Skill Snapshot 删除脚本 (macOS/Linux)
 # ============================================================
 
 set -e
@@ -19,4 +19,10 @@ else
     exit 1
 fi
 
-$PYTHON_CMD "$PYTHON_SCRIPT" scan
+# 参数: $1 = 技能名称, $2 = 版本
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "用法: delete.sh <技能名称> <版本>" >&2
+    exit 1
+fi
+
+$PYTHON_CMD "$PYTHON_SCRIPT" delete "$1" "$2"

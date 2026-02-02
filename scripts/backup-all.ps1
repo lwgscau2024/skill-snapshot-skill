@@ -1,14 +1,11 @@
-﻿# ============================================================
-# diff.ps1 - Skill Snapshot 对比脚本 (Windows 11 Optimized)
+# ============================================================
+# backup-all.ps1 - 备份所有技能 (Windows 11 Optimized)
 # ============================================================
 
 #Requires -Version 5.1
 param(
-    [Parameter(Position = 0, Mandatory = $true)]
-    [string]$SkillName,
-    
-    [Parameter(Position = 1)]
-    [string]$Version
+    [Parameter(Position = 0)]
+    [string]$Message
 )
 
 $ErrorActionPreference = "Stop"
@@ -25,12 +22,11 @@ if (-not (Get-Command "python" -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-$ArgsList = @("diff", $SkillName)
-if (-not [string]::IsNullOrEmpty($Version)) {
-    $ArgsList += $Version
+$ArgsList = @("backup-all")
+if (-not [string]::IsNullOrEmpty($Message)) {
+    $ArgsList += $Message
 }
 
-# Python script uses ANSI codes, which work in newer PowerShell / Windows Terminal
 python "$PythonScript" @ArgsList
 
 if ($LASTEXITCODE -ne 0) {

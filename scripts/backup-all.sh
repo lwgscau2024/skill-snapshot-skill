@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# scan.sh - Skill Snapshot 扫描脚本 (macOS/Linux)
+# backup-all.sh - Skill Snapshot 批量备份脚本 (macOS/Linux)
 # ============================================================
 
 set -e
@@ -19,4 +19,9 @@ else
     exit 1
 fi
 
-$PYTHON_CMD "$PYTHON_SCRIPT" scan
+# 参数: $1 = 消息（可选）
+if [ -n "$1" ]; then
+    $PYTHON_CMD "$PYTHON_SCRIPT" backup-all "$1"
+else
+    $PYTHON_CMD "$PYTHON_SCRIPT" backup-all
+fi
