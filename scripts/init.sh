@@ -1,5 +1,6 @@
 #!/bin/bash
-# skill-snapshot init - 初始化私有仓库
+export GCM_INTERACTIVE=never
+export GIT_TERMINAL_PROMPT=0
 
 set -e
 
@@ -9,7 +10,6 @@ GITHUB_USER=$(gh api user -q '.login')
 
 echo "=== Skill Snapshot 初始化 ==="
 
-# 检查 GitHub 仓库是否存在
 if gh repo view "$GITHUB_USER/$REPO_NAME" &>/dev/null; then
     echo "✓ GitHub 仓库已存在: $GITHUB_USER/$REPO_NAME"
 else
@@ -18,7 +18,6 @@ else
     echo "✓ 私有仓库已创建"
 fi
 
-# 检查本地目录
 if [ -d "$LOCAL_PATH/.git" ]; then
     echo "✓ 本地仓库已存在: $LOCAL_PATH"
     cd "$LOCAL_PATH"

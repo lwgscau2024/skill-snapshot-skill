@@ -1,5 +1,6 @@
 #!/bin/bash
-# skill-snapshot save - 保存技能快照
+export GCM_INTERACTIVE=never
+export GIT_TERMINAL_PROMPT=0
 
 set -e
 
@@ -8,7 +9,6 @@ MESSAGE="$2"
 SKILLS_DIR="$HOME/.claude/skills"
 LOCAL_REPO="$HOME/.claude/skill-snapshots"
 
-# 参数检查
 if [ -z "$SKILL_NAME" ]; then
     echo "错误: 请指定技能名称"
     echo "用法: save.sh <skill-name> [message]"
@@ -17,19 +17,16 @@ fi
 
 SKILL_PATH="$SKILLS_DIR/$SKILL_NAME"
 
-# 检查技能是否存在
 if [ ! -d "$SKILL_PATH" ]; then
     echo "错误: 技能不存在: $SKILL_PATH"
     exit 1
 fi
 
-# 检查是否为符号链接
 if [ -L "$SKILL_PATH" ]; then
     echo "错误: $SKILL_NAME 是符号链接（外部安装），不支持快照"
     exit 1
 fi
 
-# 检查仓库是否已初始化
 if [ ! -d "$LOCAL_REPO/.git" ]; then
     echo "错误: 仓库未初始化，请先执行 init"
     exit 1
@@ -37,11 +34,9 @@ fi
 
 cd "$LOCAL_REPO"
 
-# 拉取最新
 git pull --quiet origin main 2>/dev/null || true
 git fetch --tags --quiet
 
-# 确定版本号
 EXISTING_TAGS=$(git tag -l "$SKILL_NAME/v*" 2>/dev/null | sort -V | tail -1)
 if [ -z "$EXISTING_TAGS" ]; then
     NEXT_VERSION="v1"
@@ -52,7 +47,6 @@ fi
 
 TAG_NAME="$SKILL_NAME/$NEXT_VERSION"
 
-# 默认消息
 if [ -z "$MESSAGE" ]; then
     MESSAGE="Snapshot at $(date '+%Y-%m-%d %H:%M')"
 fi
@@ -63,16 +57,16 @@ echo "版本: $NEXT_VERSION"
 echo "说明: $MESSAGE"
 echo ""
 
-# 复制技能目录（排除 .git 和 __pycache__）
 rm -rf "$LOCAL_REPO/$SKILL_NAME"
 mkdir -p "$LOCAL_REPO/$SKILL_NAME"
-rsync -a --exclude='.git' --exclude='__pycache__' --exclude='.DS_Store' \
-    "$SKILL_PATH/" "$LOCAL_REPO/$SKILL_NAME/"
 
-# Git 操作
+cp -r "$SKILL_PATH/"* "$LOCAL_REPO/$SKILL_NAME/"
+find "$LOCAL_REPO/$SKILL_NAME" -name ".git" -type d -exec rm -rf {} + 2>/dev/null || true
+find "$LOCAL_REPO/$SKILL_NAME" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+find "$LOCAL_REPO/$SKILL_NAME" -name ".DS_Store" -type f -delete 2>/dev/null || true
+
 git add "$SKILL_NAME/"
 
-# 检查是否有变化
 if git diff --cached --quiet; then
     echo "✓ 无变化 - 内容与最新快照相同，无需保存"
     LATEST_TAG=$(git tag -l "$SKILL_NAME/v*" 2>/dev/null | sort -V | tail -1)

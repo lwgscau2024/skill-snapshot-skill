@@ -1,5 +1,6 @@
 #!/bin/bash
-# skill-snapshot scan - 扫描技能，判断哪些需要备份
+export GCM_INTERACTIVE=never
+export GIT_TERMINAL_PROMPT=0
 
 SKILLS_DIR="$HOME/.claude/skills"
 LOCAL_REPO="$HOME/.claude/skill-snapshots"
@@ -29,19 +30,16 @@ check_skill() {
         return
     fi
 
-    # 规则 4: 包含 .git（自带版本控制）
     if [ -d "$skill_path/.git" ]; then
         echo "SKIP|$skill_name|自带 Git 版本控制"
         return
     fi
 
-    # 规则 5: 包含 .venv 或 node_modules（大量依赖）
     if [ -d "$skill_path/.venv" ] || [ -d "$skill_path/node_modules" ]; then
         echo "SKIP|$skill_name|包含依赖目录 (.venv/node_modules)"
         return
     fi
 
-    # 规则 6: 体积超过 10MB
     local size_kb=$(du -sk "$skill_path" 2>/dev/null | cut -f1)
     if [ "$size_kb" -gt 10240 ]; then
         local size_mb=$((size_kb / 1024))
@@ -49,17 +47,14 @@ check_skill() {
         return
     fi
 
-    # 规则 7: 没有 SKILL.md（可能不是有效技能）
     if [ ! -f "$skill_path/SKILL.md" ]; then
         echo "SKIP|$skill_name|缺少 SKILL.md"
         return
     fi
 
-    # 通过所有检查，需要备份
     local files=$(find "$skill_path" -type f ! -name '.DS_Store' | wc -l | tr -d ' ')
     local size=$(du -sh "$skill_path" 2>/dev/null | cut -f1)
 
-    # 检查是否已有快照
     local has_snapshot=""
     if [ -d "$LOCAL_REPO/.git" ]; then
         cd "$LOCAL_REPO"
