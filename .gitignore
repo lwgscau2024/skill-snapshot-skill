@@ -3,21 +3,48 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+*.egg
+*.egg-info/
+dist/
+build/
 
 # Virtual environments
 .venv/
 venv/
 ENV/
+env/
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Trashes
 Thumbs.db
+ehthumbs.db
 
 # Testing/Coverage
 .coverage
 htmlcov/
 .pytest_cache/
+.tox/
+
+# Logs
+*.log
+
+# Secrets & Local Config
+.env
+.env.*
+*.pem
+*.key
+secrets.json
+
+# Project Specific
+# Ignore local test outputs or temporary files if any
+.snapshot_cache/
+.snapshot.lock
